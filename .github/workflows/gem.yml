@@ -19,9 +19,12 @@ jobs:
         id: fetch
         with:
           supported-ruby-platforms: |
-            exclude: [arm-linux x86_64-linux-musl]
+            exclude:
+              - arm-linux
+              - x86_64-linux-musl
           stable-ruby-versions: |
-            exclude: [head]
+            exclude:
+              - head
 
   cross-gem:
     name: Compile native gem for ${{ matrix.platform }}
