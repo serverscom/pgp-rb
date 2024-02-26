@@ -1,0 +1,7 @@
+lib/pgp-rb/pgp_rb.bundle
+lib/pgp-rb/pgp_rb.so
+doc
+tmp
+ext/pgp_rb/target
+.DS_Store
+.yardoc
