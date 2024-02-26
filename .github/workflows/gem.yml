@@ -22,6 +22,8 @@ jobs:
             exclude:
               - arm-linux
               - x86_64-linux-musl
+              - x64-mingw-ucrt
+              - x64-mingw32
           stable-ruby-versions: |
             exclude:
               - head
