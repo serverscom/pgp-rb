@@ -118,7 +118,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect(described_class.parse(key).created_at.to_s).to eq('2024-02-26 12:33:15 +0200')
+        expect(described_class.parse(key).created_at.utc.to_s).to eq('2024-02-26 10:33:15 UTC')
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/rsa_public_key') }
 
       specify do
-        expect(described_class.parse(key).created_at.to_s).to eq('2024-02-26 13:29:15 +0200')
+        expect(described_class.parse(key).created_at.utc.to_s).to eq('2024-02-26 11:29:15 UTC')
       end
     end
   end

@@ -34,7 +34,3 @@ Rake::TestTask.new do |t|
   t.deps << :compile
   t.test_files = FileList[File.expand_path('test/*_test.rb', __dir__)]
 end
-
-task bench: :compile do
-  ruby 'test/bench.rb'
-end

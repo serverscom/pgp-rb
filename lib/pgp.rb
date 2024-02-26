@@ -1,6 +1,10 @@
 # frozen_string_literal: true
-
-require_relative 'pgp-rb/pgp_rb'
+begin
+  /(?<ruby_version>\d+\.\d+)/ =~ RUBY_VERSION
+  require_relative "pgp-rb/#{ruby_version}/pgp_rb"
+rescue LoadError
+  require_relative 'pgp-rb/pgp_rb'
+end
 
 module PGP
   KEY_ALGORITHM_RSA = 1

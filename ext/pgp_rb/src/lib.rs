@@ -7,8 +7,12 @@ use magnus::{
 };
 
 use pgp::composed::{Message, Deserializable, SignedPublicKey};
+use pgp::crypto::public_key::PublicKeyAlgorithm;
 use pgp::crypto::sym::SymmetricKeyAlgorithm;
+
+use pgp::types::KeyVersion;
 use pgp::types::KeyTrait;
+use num_traits::cast::FromPrimitive;
 
 use std::io::Cursor;
 use base64::{engine::general_purpose, Engine as _};
@@ -68,7 +72,29 @@ impl PgpPublicKey {
     }
 
     fn algorithm(rb_self: &PgpPublicKey) -> u8 {
-        u8::from(rb_self.signed_public_key.algorithm())
+        match rb_self.signed_public_key.algorithm() {
+            PublicKeyAlgorithm::RSA => 1,
+            PublicKeyAlgorithm::RSAEncrypt => 2,
+            PublicKeyAlgorithm::RSASign => 3,
+            PublicKeyAlgorithm::ElgamalSign => 16,
+            PublicKeyAlgorithm::DSA => 17,
+            PublicKeyAlgorithm::ECDH => 18,
+            PublicKeyAlgorithm::ECDSA => 19,
+            PublicKeyAlgorithm::Elgamal => 20,
+            PublicKeyAlgorithm::DiffieHellman => 21,
+            PublicKeyAlgorithm::EdDSA => 22,
+            PublicKeyAlgorithm::Private100 => 100,
+            PublicKeyAlgorithm::Private101 => 101,
+            PublicKeyAlgorithm::Private102 => 102,
+            PublicKeyAlgorithm::Private103 => 103,
+            PublicKeyAlgorithm::Private104 => 104,
+            PublicKeyAlgorithm::Private105 => 105,
+            PublicKeyAlgorithm::Private106 => 106,
+            PublicKeyAlgorithm::Private107 => 107,
+            PublicKeyAlgorithm::Private108 => 108,
+            PublicKeyAlgorithm::Private109 => 109,
+            PublicKeyAlgorithm::Private110 => 110
+        }
     }
 
     fn is_signing_key(rb_self: &PgpPublicKey) -> bool {
@@ -80,7 +106,12 @@ impl PgpPublicKey {
     }
 
     fn version(rb_self: &PgpPublicKey) -> u8 {
-        u8::from(rb_self.signed_public_key.primary_key.version())
+        match rb_self.signed_public_key.primary_key.version() {
+            KeyVersion::V2 => 2,
+            KeyVersion::V3 => 3,
+            KeyVersion::V4 => 4,
+            KeyVersion::V5 => 5
+        }
     }
 
     fn created_at(ruby: &Ruby, rb_self: &PgpPublicKey) -> Result<Time, Error> {
@@ -104,17 +135,15 @@ impl PgpPublicKey {
 
     fn encrypt_with_algorithm(ruby: &Ruby, rb_self: &PgpPublicKey, input: String, algorithm: Integer) -> Result<String, Error> {
         let alg = match algorithm.to_u8() {
-            Ok(v) => SymmetricKeyAlgorithm::from(v),
+            Ok(v) => match SymmetricKeyAlgorithm::from_u8(v) {
+                Some(a) => a,
+                None => {
+                    let error_message = format!("unsupported algorithm: {}", algorithm);
+                    return Err(Error::new(ruby.exception_arg_error(), error_message))
+                }
+            },
             Err(e) => return Err(e)
         };
-
-        match alg {
-            SymmetricKeyAlgorithm::Other(_) => {
-                let error_message = format!("unsupported algorithm: {}", algorithm);
-                return Err(Error::new(ruby.exception_arg_error(), error_message))
-            },
-            _ => {}
-        }
 
         let msg = Message::new_literal("", &input.to_string());
         let encrypted = msg.encrypt_to_keys(
