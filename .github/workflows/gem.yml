@@ -38,7 +38,7 @@ jobs:
     - uses: oxidize-rb/cross-gem-action@v1
       id: cross-gem
       with:
-        platform: ${{ matrix.ruby-platform }}
+        platform: ${{ matrix.platform }}
         ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
         setup: bundle
     - uses: actions/upload-artifact@v2
