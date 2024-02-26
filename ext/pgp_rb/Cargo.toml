@@ -4,10 +4,11 @@ version = "1.0.0"
 edition = "2021"
 
 [dependencies]
-pgp = "0.11.0"
+pgp = "0.10.2"
 rand = "0.8.5"
 magnus = { git = "https://github.com/matsadler/magnus.git", default_features = false }
 base64 = "0.21.7"
+num-traits = "0.2.18"
 
 [lib]
 crate-type = ["cdylib"]
