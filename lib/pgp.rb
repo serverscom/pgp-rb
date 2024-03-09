@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 begin
   /(?<ruby_version>\d+\.\d+)/ =~ RUBY_VERSION
   require_relative "pgp-rb/#{ruby_version}/pgp_rb"
@@ -31,17 +32,17 @@ module PGP
     KEY_ALGORITHM_EDDSA => 'EdDSA'
   }.freeze
 
-  ENCRIPTION_ALGORITHM_IDEA = 1
-  ENCRIPTION_ALGORITHM_TRIPLE_DES = 2
-  ENCRIPTION_ALGORITHM_CAST5 = 3
-  ENCRIPTION_ALGORITHM_BLOWFISH = 4
-  ENCRIPTION_ALGORITHM_AES_128 = 7
-  ENCRIPTION_ALGORITHM_AES_192 = 8
-  ENCRIPTION_ALGORITHM_AES_256 = 9
-  ENCRIPTION_ALGORITHM_TWOFISH = 10
-  ENCRIPTION_ALGORITHM_CAMELLIA_128 = 11
-  ENCRIPTION_ALGORITHM_CAMELLIA_192 = 12
-  ENCRIPTION_ALGORITHM_CAMELLIA_256 = 13
+  ENCRYPTION_ALGORITHM_IDEA = 1
+  ENCRYPTION_ALGORITHM_TRIPLE_DES = 2
+  ENCRYPTION_ALGORITHM_CAST5 = 3
+  ENCRYPTION_ALGORITHM_BLOWFISH = 4
+  ENCRYPTION_ALGORITHM_AES_128 = 7
+  ENCRYPTION_ALGORITHM_AES_192 = 8
+  ENCRYPTION_ALGORITHM_AES_256 = 9
+  ENCRYPTION_ALGORITHM_TWOFISH = 10
+  ENCRYPTION_ALGORITHM_CAMELLIA_128 = 11
+  ENCRYPTION_ALGORITHM_CAMELLIA_192 = 12
+  ENCRYPTION_ALGORITHM_CAMELLIA_256 = 13
 
   # Public Key class provides an native extension representation for working with PGP public keys.
   class PublicKey
@@ -110,7 +111,7 @@ module PGP
     # @param data [String] the data to be encrypted.
     # @param algorithm [Integer] the encryption algorithm to use, defaults to AES-128.
     # @return [String] the encrypted data encoded by base64.
-    def encrypt(data, algorithm = ENCRIPTION_ALGORITHM_AES_128)
+    def encrypt(data, algorithm = ENCRYPTION_ALGORITHM_AES_128)
       encrypt_with_algorithm(data, algorithm)
     end
   end
