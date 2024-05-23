@@ -18,6 +18,7 @@ Rake::ExtensionTask.new('pgp_rb', spec) do |c|
   c.cross_compile = true
   c.cross_platform = %w[
     aarch64-linux
+    aarch64-linux-musl
     arm64-darwin
     x64-mingw-ucrt
     x64-mingw32
