@@ -66,6 +66,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  bundler
   pgp-rb!
   pry
   rake-compiler (~> 1.2)
