@@ -9,10 +9,10 @@ use magnus::{
 use pgp::composed::{Message, Deserializable, SignedPublicKey};
 use pgp::crypto::public_key::PublicKeyAlgorithm;
 use pgp::crypto::sym::SymmetricKeyAlgorithm;
+use pgp::composed::message::ArmorOptions;
 
 use pgp::types::KeyVersion;
 use pgp::types::KeyTrait;
-use num_traits::cast::FromPrimitive;
 
 use std::io::Cursor;
 use base64::{engine::general_purpose, Engine as _};
@@ -71,29 +71,30 @@ impl PgpPublicKey {
         .to_uppercase()
     }
 
-    fn algorithm(rb_self: &PgpPublicKey) -> u8 {
+    fn algorithm(rb_self: &PgpPublicKey) -> Option<u8> {
         match rb_self.signed_public_key.algorithm() {
-            PublicKeyAlgorithm::RSA => 1,
-            PublicKeyAlgorithm::RSAEncrypt => 2,
-            PublicKeyAlgorithm::RSASign => 3,
-            PublicKeyAlgorithm::ElgamalSign => 16,
-            PublicKeyAlgorithm::DSA => 17,
-            PublicKeyAlgorithm::ECDH => 18,
-            PublicKeyAlgorithm::ECDSA => 19,
-            PublicKeyAlgorithm::Elgamal => 20,
-            PublicKeyAlgorithm::DiffieHellman => 21,
-            PublicKeyAlgorithm::EdDSA => 22,
-            PublicKeyAlgorithm::Private100 => 100,
-            PublicKeyAlgorithm::Private101 => 101,
-            PublicKeyAlgorithm::Private102 => 102,
-            PublicKeyAlgorithm::Private103 => 103,
-            PublicKeyAlgorithm::Private104 => 104,
-            PublicKeyAlgorithm::Private105 => 105,
-            PublicKeyAlgorithm::Private106 => 106,
-            PublicKeyAlgorithm::Private107 => 107,
-            PublicKeyAlgorithm::Private108 => 108,
-            PublicKeyAlgorithm::Private109 => 109,
-            PublicKeyAlgorithm::Private110 => 110
+            PublicKeyAlgorithm::RSA => Some(1),
+            PublicKeyAlgorithm::RSAEncrypt => Some(2),
+            PublicKeyAlgorithm::RSASign => Some(3),
+            PublicKeyAlgorithm::ElgamalSign => Some(16),
+            PublicKeyAlgorithm::DSA => Some(17),
+            PublicKeyAlgorithm::ECDH => Some(18),
+            PublicKeyAlgorithm::ECDSA => Some(19),
+            PublicKeyAlgorithm::Elgamal => Some(20),
+            PublicKeyAlgorithm::DiffieHellman => Some(21),
+            PublicKeyAlgorithm::EdDSA => Some(22),
+            PublicKeyAlgorithm::Private100 => Some(100),
+            PublicKeyAlgorithm::Private101 => Some(101),
+            PublicKeyAlgorithm::Private102 => Some(102),
+            PublicKeyAlgorithm::Private103 => Some(103),
+            PublicKeyAlgorithm::Private104 => Some(104),
+            PublicKeyAlgorithm::Private105 => Some(105),
+            PublicKeyAlgorithm::Private106 => Some(106),
+            PublicKeyAlgorithm::Private107 => Some(107),
+            PublicKeyAlgorithm::Private108 => Some(108),
+            PublicKeyAlgorithm::Private109 => Some(109),
+            PublicKeyAlgorithm::Private110 => Some(110),
+            PublicKeyAlgorithm::Unknown(_) => None,
         }
     }
 
@@ -105,12 +106,13 @@ impl PgpPublicKey {
         rb_self.signed_public_key.is_encryption_key()
     }
 
-    fn version(rb_self: &PgpPublicKey) -> u8 {
+    fn version(rb_self: &PgpPublicKey) -> Option<u8> {
         match rb_self.signed_public_key.primary_key.version() {
-            KeyVersion::V2 => 2,
-            KeyVersion::V3 => 3,
-            KeyVersion::V4 => 4,
-            KeyVersion::V5 => 5
+            KeyVersion::V2 => Some(2),
+            KeyVersion::V3 => Some(3),
+            KeyVersion::V4 => Some(4),
+            KeyVersion::V5 => Some(5),
+            KeyVersion::Other(_) => None
         }
     }
 
@@ -135,13 +137,7 @@ impl PgpPublicKey {
 
     fn encrypt_with_algorithm(ruby: &Ruby, rb_self: &PgpPublicKey, input: String, algorithm: Integer) -> Result<String, Error> {
         let alg = match algorithm.to_u8() {
-            Ok(v) => match SymmetricKeyAlgorithm::from_u8(v) {
-                Some(a) => a,
-                None => {
-                    let error_message = format!("unsupported algorithm: {}", algorithm);
-                    return Err(Error::new(ruby.exception_arg_error(), error_message))
-                }
-            },
+            Ok(v) => SymmetricKeyAlgorithm::from(v),
             Err(e) => return Err(e)
         };
 
@@ -154,7 +150,7 @@ impl PgpPublicKey {
 
         match encrypted {
             Ok(v) => {
-                match v.to_armored_string(None) {
+                match v.to_armored_string(ArmorOptions::default()) {
                     Ok(s) => Ok(general_purpose::STANDARD.encode(s)),
                     Err(e) => {
                         let error_message = format!("can't convert encrpyted to string: {}", e);
