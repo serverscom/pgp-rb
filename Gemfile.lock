@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pgp-rb (0.2.0)
+    pgp-rb (0.2.1)
 
 GEM
   remote: https://rubygems.org/
@@ -73,3 +73,6 @@ DEPENDENCIES
   rb_sys (~> 0.9)
   rspec (~> 3.13)
   rubocop
+
+BUNDLED WITH
+   2.6.2
