@@ -73,6 +73,3 @@ DEPENDENCIES
   rb_sys (~> 0.9)
   rspec (~> 3.13)
   rubocop
-
-BUNDLED WITH
-   2.2.33
