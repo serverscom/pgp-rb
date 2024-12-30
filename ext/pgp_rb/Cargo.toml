@@ -9,7 +9,7 @@ rand = "0.8.5"
 magnus = "0.7.1"
 base64 = "0.21.7"
 num-traits = "0.2.18"
-rb-sys = { version = "*", features = ["ruby-static"] }
+rb-sys = { version = "0.9.105", features = ["ruby-static"] }
 
 [lib]
 crate-type = ["cdylib"]
