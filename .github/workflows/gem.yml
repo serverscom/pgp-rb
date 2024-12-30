@@ -35,17 +35,20 @@ jobs:
       matrix:
         platform: ${{ fromJSON(needs.ci-data.outputs.result).supported-ruby-platforms }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Create registry dir
+      run: |
+        mkdir -p $HOME/.cargo/registry
 
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1'
+        ruby-version: '3.2'
 
     - uses: oxidize-rb/actions/cross-gem@v1
       id: cross-gem
       with:
         platform: ${{ matrix.platform }}
-        working-directory: ext/pgp_rb
         ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
 
     - name: Build and publish Gem
