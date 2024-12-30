@@ -21,7 +21,7 @@ jobs:
               - x64-mingw32
           stable-ruby-versions: |
             exclude: [head]
-  ci:
+  test:
     runs-on: ${{ matrix.os }}
     needs: ci-data
     strategy:
