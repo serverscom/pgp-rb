@@ -45,6 +45,7 @@ jobs:
       id: cross-gem
       with:
         platform: ${{ matrix.platform }}
+        working-directory: ext/pgp_rb
         ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
 
     - name: Build and publish Gem
