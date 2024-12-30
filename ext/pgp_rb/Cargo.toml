@@ -4,7 +4,7 @@ version = "1.0.0"
 edition = "2021"
 
 [dependencies]
-pgp = "0.13.1"
+pgp = "0.14.1"
 rand = "0.8.5"
 magnus = { git = "https://github.com/matsadler/magnus.git", default_features = false }
 base64 = "0.21.7"
