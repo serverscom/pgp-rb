@@ -913,8 +913,9 @@ checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
 
 [[package]]
 name = "magnus"
-version = "0.6.0"
-source = "git+https://github.com/matsadler/magnus.git#a1e98dd6aa85ab96d5d93a980feb64e856a56c21"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3d87ae53030f3a22e83879e666cb94e58a7bdf31706878a0ba48752994146dab"
 dependencies = [
  "magnus-macros",
  "rb-sys",
@@ -925,7 +926,8 @@ dependencies = [
 [[package]]
 name = "magnus-macros"
 version = "0.6.0"
-source = "git+https://github.com/matsadler/magnus.git#a1e98dd6aa85ab96d5d93a980feb64e856a56c21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5968c820e2960565f647819f5928a42d6e874551cab9d88d75e3e0660d7f71e3"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1200,6 +1202,7 @@ dependencies = [
  "num-traits",
  "pgp",
  "rand",
+ "rb-sys",
 ]
 
 [[package]]

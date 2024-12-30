@@ -6,9 +6,10 @@ edition = "2021"
 [dependencies]
 pgp = "0.14.1"
 rand = "0.8.5"
-magnus = { git = "https://github.com/matsadler/magnus.git", default_features = false }
+magnus = "0.7.1"
 base64 = "0.21.7"
 num-traits = "0.2.18"
+rb-sys = { version = "*", features = ["ruby-static"] }
 
 [lib]
 crate-type = ["cdylib"]
