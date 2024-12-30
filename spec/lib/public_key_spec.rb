@@ -46,7 +46,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect(described_class.parse(key).algorithm).to eq(PGP::KEY_ALGORITHM_EDDSA)
+        expect(described_class.parse(key).algorithm).to eq(PGP::KEY_ALGORITHM_EDDSA_LEGACY)
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect(described_class.parse(key).algorithm_name).to eq(PGP::KEY_ALGORITHM_NAMES[PGP::KEY_ALGORITHM_EDDSA])
+        expect(described_class.parse(key).algorithm_name).to eq(PGP::KEY_ALGORITHM_NAMES[PGP::KEY_ALGORITHM_EDDSA_LEGACY])
       end
     end
 
@@ -208,9 +208,9 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect {
+        expect do
           described_class.parse(key).encrypt('foo')
-        }.to raise_error(PGP::EncryptionError, "can't encrypt message: \"EdDSA is only used for signing\"")
+        end.to raise_error(PGP::EncryptionError, "can't encrypt message: \"EdDSA is only used for signing\"")
       end
     end
 
@@ -218,9 +218,9 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/rsa_public_key') }
 
       specify do
-        expect {
+        expect do
           described_class.parse(key).encrypt('foo')
-        }.not_to raise_error
+        end.not_to raise_error
       end
     end
   end
