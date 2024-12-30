@@ -17,7 +17,11 @@ module PGP
   KEY_ALGORITHM_ECDSA = 19
   KEY_ALGORITHM_ELGAMAL = 20
   KEY_ALGORITHM_DIFFIE_HELLMAN = 21
-  KEY_ALGORITHM_EDDSA = 22
+  KEY_ALGORITHM_EDDSA_LEGACY = 22
+  KEY_ALGORITHM_X25519 = 25
+  KEY_ALGORITHM_X448 = 26
+  KEY_ALGORITHM_ED25519 = 27
+  KEY_ALGORITHM_ED448 = 28
 
   KEY_ALGORITHM_NAMES = {
     KEY_ALGORITHM_RSA => 'RSA (Encrypt and Sign)',
@@ -29,20 +33,24 @@ module PGP
     KEY_ALGORITHM_ECDSA => 'ECDSA: RFC-6637',
     KEY_ALGORITHM_ELGAMAL => 'Elgamal (Encrypt and Sign)',
     KEY_ALGORITHM_DIFFIE_HELLMAN => 'Diffie-Hellman (X9.42, as defined for IETF-S/MIME)',
-    KEY_ALGORITHM_EDDSA => 'EdDSA'
+    KEY_ALGORITHM_EDDSA_LEGACY => 'EdDSA legacy format [deprecated in RFC 9580, superseded by Ed25519 (27)]',
+    KEY_ALGORITHM_X25519 => 'X25519 [RFC 9580]',
+    KEY_ALGORITHM_X448 => 'X448 [RFC 9580]',
+    KEY_ALGORITHM_ED25519 => 'Ed25519 [RFC 9580]',
+    KEY_ALGORITHM_ED448 => 'Ed448 [RFC 9580]'
   }.freeze
 
-  ENCRYPTION_ALGORITHM_IDEA = 1
-  ENCRYPTION_ALGORITHM_TRIPLE_DES = 2
-  ENCRYPTION_ALGORITHM_CAST5 = 3
-  ENCRYPTION_ALGORITHM_BLOWFISH = 4
-  ENCRYPTION_ALGORITHM_AES_128 = 7
-  ENCRYPTION_ALGORITHM_AES_192 = 8
-  ENCRYPTION_ALGORITHM_AES_256 = 9
-  ENCRYPTION_ALGORITHM_TWOFISH = 10
-  ENCRYPTION_ALGORITHM_CAMELLIA_128 = 11
-  ENCRYPTION_ALGORITHM_CAMELLIA_192 = 12
-  ENCRYPTION_ALGORITHM_CAMELLIA_256 = 13
+  ENCRIPTION_ALGORITHM_IDEA = 1
+  ENCRIPTION_ALGORITHM_TRIPLE_DES = 2
+  ENCRIPTION_ALGORITHM_CAST5 = 3
+  ENCRIPTION_ALGORITHM_BLOWFISH = 4
+  ENCRIPTION_ALGORITHM_AES_128 = 7
+  ENCRIPTION_ALGORITHM_AES_192 = 8
+  ENCRIPTION_ALGORITHM_AES_256 = 9
+  ENCRIPTION_ALGORITHM_TWOFISH = 10
+  ENCRIPTION_ALGORITHM_CAMELLIA_128 = 11
+  ENCRIPTION_ALGORITHM_CAMELLIA_192 = 12
+  ENCRIPTION_ALGORITHM_CAMELLIA_256 = 13
 
   # Public Key class provides an native extension representation for working with PGP public keys.
   class PublicKey
@@ -65,9 +73,9 @@ module PGP
     #   Checks if the public key supports signing.
     #   @return [Boolean] true if the key supports signing, false otherwise.
 
-    # @!method encryption_supported?
-    #   Checks if the public key supports encryption.
-    #   @return [Boolean] true if the key supports encryption, false otherwise.
+    # @!method ENCRIPTION_supported?
+    #   Checks if the public key supports ENCRIPTION.
+    #   @return [Boolean] true if the key supports ENCRIPTION, false otherwise.
 
     # @!method version
     #   Returns the version of the public key.
@@ -84,7 +92,7 @@ module PGP
     # @!method encrypt_with_algorithm(input, algorithm)
     #   Encrypts data with the specified algorithm.
     #   @param input [String] the data to be encrypted.
-    #   @param algorithm [Integer] the encryption algorithm identifier.
+    #   @param algorithm [Integer] the ENCRIPTION algorithm identifier.
     #   @return [String] the encrypted data encoded by base64.
 
     # Returns a string representation of the PublicKey object, including its fingerprint, algorithm name, and version.
@@ -107,11 +115,11 @@ module PGP
       expires_at.to_i <= Time.now.to_i
     end
 
-    # Encrypts data using the specified encryption algorithm.
+    # Encrypts data using the specified ENCRIPTION algorithm.
     # @param data [String] the data to be encrypted.
-    # @param algorithm [Integer] the encryption algorithm to use, defaults to AES-128.
+    # @param algorithm [Integer] the ENCRIPTION algorithm to use, defaults to AES-128.
     # @return [String] the encrypted data encoded by base64.
-    def encrypt(data, algorithm = ENCRYPTION_ALGORITHM_AES_128)
+    def encrypt(data, algorithm = ENCRIPTION_ALGORITHM_AES_128)
       encrypt_with_algorithm(data, algorithm)
     end
   end

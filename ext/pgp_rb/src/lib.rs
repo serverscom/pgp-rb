@@ -12,7 +12,7 @@ use pgp::crypto::sym::SymmetricKeyAlgorithm;
 use pgp::composed::message::ArmorOptions;
 
 use pgp::types::KeyVersion;
-use pgp::types::KeyTrait;
+use pgp::types::PublicKeyTrait;
 
 use std::io::Cursor;
 use base64::{engine::general_purpose, Engine as _};
@@ -65,7 +65,7 @@ impl PgpPublicKey {
     fn fingerprint(rb_self: &PgpPublicKey) -> String {
        rb_self.signed_public_key
         .fingerprint()
-        .iter()
+        .as_bytes().iter()
         .map(|byte| format!("{:02x}", byte))
         .collect::<String>()
         .to_uppercase()
@@ -82,7 +82,11 @@ impl PgpPublicKey {
             PublicKeyAlgorithm::ECDSA => Some(19),
             PublicKeyAlgorithm::Elgamal => Some(20),
             PublicKeyAlgorithm::DiffieHellman => Some(21),
-            PublicKeyAlgorithm::EdDSA => Some(22),
+            PublicKeyAlgorithm::EdDSALegacy => Some(22),
+            PublicKeyAlgorithm::X25519 => Some(25),
+            PublicKeyAlgorithm::X448 => Some(26),
+            PublicKeyAlgorithm::Ed25519 => Some(27),
+            PublicKeyAlgorithm::Ed448 => Some(28),
             PublicKeyAlgorithm::Private100 => Some(100),
             PublicKeyAlgorithm::Private101 => Some(101),
             PublicKeyAlgorithm::Private102 => Some(102),
@@ -112,6 +116,7 @@ impl PgpPublicKey {
             KeyVersion::V3 => Some(3),
             KeyVersion::V4 => Some(4),
             KeyVersion::V5 => Some(5),
+            KeyVersion::V6 => Some(6),
             KeyVersion::Other(_) => None
         }
     }
@@ -142,7 +147,7 @@ impl PgpPublicKey {
         };
 
         let msg = Message::new_literal("", &input.to_string());
-        let encrypted = msg.encrypt_to_keys(
+        let encrypted = msg.encrypt_to_keys_seipdv1(
             &mut rand::thread_rng(),
             alg,
             &[&rb_self.signed_public_key]
