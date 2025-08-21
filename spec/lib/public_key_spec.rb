@@ -210,7 +210,7 @@ RSpec.describe PGP::PublicKey do
       specify do
         expect do
           described_class.parse(key).encrypt('foo')
-        end.to raise_error(PGP::EncryptionError, "can't encrypt message: \"EdDSALegacy is only used for signing\"")
+        end.to raise_error(PGP::EncryptionError, "Failed to add encryption key: EdDSALegacy is only used for signing")
       end
     end
 

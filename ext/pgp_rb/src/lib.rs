@@ -6,10 +6,11 @@ use magnus::{
     Error, Ruby, RModule, Time, Integer
 };
 
-use pgp::composed::{Message, Deserializable, SignedPublicKey};
+use pgp::composed::{Deserializable, SignedPublicKey};
 use pgp::crypto::public_key::PublicKeyAlgorithm;
 use pgp::crypto::sym::SymmetricKeyAlgorithm;
-use pgp::composed::message::ArmorOptions;
+use pgp::composed::MessageBuilder;
+use pgp::types::KeyDetails;
 
 use pgp::types::KeyVersion;
 use pgp::types::PublicKeyTrait;
@@ -76,7 +77,6 @@ impl PgpPublicKey {
             PublicKeyAlgorithm::RSA => Some(1),
             PublicKeyAlgorithm::RSAEncrypt => Some(2),
             PublicKeyAlgorithm::RSASign => Some(3),
-            PublicKeyAlgorithm::ElgamalSign => Some(16),
             PublicKeyAlgorithm::DSA => Some(17),
             PublicKeyAlgorithm::ECDH => Some(18),
             PublicKeyAlgorithm::ECDSA => Some(19),
@@ -99,6 +99,7 @@ impl PgpPublicKey {
             PublicKeyAlgorithm::Private109 => Some(109),
             PublicKeyAlgorithm::Private110 => Some(110),
             PublicKeyAlgorithm::Unknown(_) => None,
+            _ => None,
         }
     }
 
@@ -146,28 +147,17 @@ impl PgpPublicKey {
             Err(e) => return Err(e)
         };
 
-        let msg = Message::new_literal("", &input.to_string());
-        let encrypted = msg.encrypt_to_keys_seipdv1(
-            &mut rand::thread_rng(),
-            alg,
-            &[&rb_self.signed_public_key]
-        );
+        let input_bytes = input.into_bytes();
+        let mut builder = MessageBuilder::from_bytes("", input_bytes)
+            .seipd_v1(&mut rand::thread_rng(), alg);
+        
+        builder.encrypt_to_key(&mut rand::thread_rng(), &rb_self.signed_public_key)
+            .map_err(|e| Error::new(ruby.get_inner(&PGP_ENCRYPTION_ERROR), format!("Failed to add encryption key: {}", e)))?;
 
-        match encrypted {
-            Ok(v) => {
-                match v.to_armored_string(ArmorOptions::default()) {
-                    Ok(s) => Ok(general_purpose::STANDARD.encode(s)),
-                    Err(e) => {
-                        let error_message = format!("can't convert encrpyted to string: {}", e);
-                        Err(Error::new(ruby.get_inner(&PGP_ENCRYPTION_ERROR), error_message))
-                    }
-                }
-            },
-            Err(e) => {
-                let error_message = format!("can't encrypt message: {}", e);
-                Err(Error::new(ruby.get_inner(&PGP_ENCRYPTION_ERROR), error_message))
-            }
-        }
+        let result = builder.to_vec(&mut rand::thread_rng())
+            .map_err(|e| Error::new(ruby.get_inner(&PGP_ENCRYPTION_ERROR), format!("Failed to encrypt: {}", e)))?;
+
+        Ok(general_purpose::STANDARD.encode(result))
     }
 }
 
