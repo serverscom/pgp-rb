@@ -100,7 +100,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect(described_class.parse(key).fingerprint).to eq('BFCC78826A7E059057FE0BD0AFEDF82707C9B0E5')
+        expect(described_class.parse(key).fingerprint).to eq('76A51CBAC7C04A095BF9A31EBB018A3C33DB1D7E')
       end
     end
 
@@ -108,7 +108,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/rsa_public_key') }
 
       specify do
-        expect(described_class.parse(key).fingerprint).to eq('892DB77152A1DC57374EF0EF0D9B81FD16DC6C51')
+        expect(described_class.parse(key).fingerprint).to eq('EE2F8AEB3AF069379E9D180A1ADE8C27433C8EC2')
       end
     end
   end
@@ -118,7 +118,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/ecc_public_key') }
 
       specify do
-        expect(described_class.parse(key).created_at.utc.to_s).to eq('2024-02-26 10:33:15 UTC')
+        expect(described_class.parse(key).created_at.utc.to_s).to eq('2025-08-21 13:04:40 UTC')
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe PGP::PublicKey do
       let(:key) { File.read('spec/fixtures/rsa_public_key') }
 
       specify do
-        expect(described_class.parse(key).created_at.utc.to_s).to eq('2024-02-26 11:29:15 UTC')
+        expect(described_class.parse(key).created_at.utc.to_s).to eq('2025-08-21 13:04:39 UTC')
       end
     end
   end
@@ -210,7 +210,7 @@ RSpec.describe PGP::PublicKey do
       specify do
         expect do
           described_class.parse(key).encrypt('foo')
-        end.to raise_error(PGP::EncryptionError, "Failed to add encryption key: EdDSALegacy is only used for signing")
+        end.to raise_error(PGP::EncryptionError, 'Failed to add encryption key: EdDSALegacy is only used for signing')
       end
     end
 

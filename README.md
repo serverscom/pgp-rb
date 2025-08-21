@@ -6,9 +6,12 @@ A Ruby gem that provides PGP (Pretty Good Privacy) functionality through a fast 
 
 - **Fast**: Built with Rust for high performance cryptographic operations
 - **Simple API**: Easy-to-use Ruby interface for PGP operations
-- **Key Parsing**: Parse and analyze PGP public keys
+- **Key Parsing**: Parse and analyze both PGP public and private keys
 - **Encryption**: Encrypt data using PGP public keys with configurable algorithms
+- **Signing**: Sign messages using PGP private keys with various hash algorithms
 - **Key Information**: Extract fingerprints, algorithms, creation dates, and expiration dates
+- **Modern Crypto**: Supports RSA, EdDSA, ECDSA, and other modern algorithms
+- **Latest Dependencies**: Uses pgp 0.16.0, base64 0.22.1, and other up-to-date Rust crates
 
 ## Installation
 
@@ -49,8 +52,54 @@ puts public_key.created_at        # Creation timestamp
 puts public_key.expires_at        # Expiration timestamp (nil if no expiration)
 
 # Check key capabilities
-puts public_key.signing_key?      # Can this key be used for signing?
-puts public_key.encryption_key?   # Can this key be used for encryption?
+puts public_key.signing_supported?      # Can this key be used for signing?
+puts public_key.encryption_supported?   # Can this key be used for encryption?
+```
+
+### Parsing PGP Private Keys
+
+```ruby
+require 'pgp'
+
+# Load a PGP private key from a file or string
+private_key_data = File.read('path/to/private_key.asc')
+private_key = PGP::PrivateKey.parse(private_key_data)
+
+# Get key information (same methods as public keys)
+puts private_key.fingerprint        # Key fingerprint in uppercase hex
+puts private_key.algorithm          # Algorithm ID (1 for RSA, 22 for EdDSA, etc.)
+puts private_key.version            # Key version (4, 5, 6)
+puts private_key.created_at         # Creation timestamp
+puts private_key.expires_at         # Expiration timestamp (nil if no expiration)
+
+# Check key capabilities
+puts private_key.signing_supported?      # Can this key be used for signing?
+puts private_key.encryption_supported?   # Can this key be used for encryption?
+```
+
+### Signing Messages
+
+```ruby
+require 'pgp'
+
+# Parse a private key
+private_key_data = File.read('path/to/private_key.asc')
+private_key = PGP::PrivateKey.parse(private_key_data)
+
+# Sign a message with default hash algorithm (SHA-256)
+signature = private_key.sign("Hello, World!")
+
+# Sign with a specific hash algorithm
+# Hash algorithm constants:
+# PGP::HASH_ALGORITHM_MD5 = 1
+# PGP::HASH_ALGORITHM_SHA1 = 2
+# PGP::HASH_ALGORITHM_SHA256 = 8
+# PGP::HASH_ALGORITHM_SHA384 = 9
+# PGP::HASH_ALGORITHM_SHA512 = 10
+signature = private_key.sign_with_algorithm("Secret message", PGP::HASH_ALGORITHM_SHA512)
+
+# The result is base64-encoded signature data
+puts signature
 ```
 
 ### Encrypting Data
@@ -94,6 +143,19 @@ PGP::KEY_ALGORITHM_CAMELLIA_192 = 12
 PGP::KEY_ALGORITHM_CAMELLIA_256 = 13
 ```
 
+And constants for hash algorithms used in signing:
+
+```ruby
+PGP::HASH_ALGORITHM_MD5 = 1
+PGP::HASH_ALGORITHM_SHA1 = 2
+PGP::HASH_ALGORITHM_SHA256 = 8
+PGP::HASH_ALGORITHM_SHA384 = 9
+PGP::HASH_ALGORITHM_SHA512 = 10
+PGP::HASH_ALGORITHM_SHA224 = 11
+PGP::HASH_ALGORITHM_SHA3_256 = 12
+PGP::HASH_ALGORITHM_SHA3_512 = 14
+```
+
 ### Error Handling
 
 The gem defines specific error classes:
@@ -109,6 +171,12 @@ begin
   encrypted = signing_only_key.encrypt("data")
 rescue PGP::EncryptionError => e
   puts "Encryption failed: #{e.message}"
+end
+
+begin
+  signature = private_key.sign("data")
+rescue PGP::SigningError => e
+  puts "Signing failed: #{e.message}"
 end
 ```
 
@@ -129,6 +197,16 @@ bundle exec rake compile
 ```bash
 bundle exec rspec
 ```
+
+### Generating Test Keys
+
+The repository includes a script to generate test keys for development:
+
+```bash
+ruby generate_test_keys.rb
+```
+
+This script will generate RSA and ECC key pairs (both public and private) and place them in the `spec/fixtures/` directory.
 
 ## Contributing
 

@@ -52,6 +52,26 @@ module PGP
   ENCRIPTION_ALGORITHM_CAMELLIA_192 = 12
   ENCRIPTION_ALGORITHM_CAMELLIA_256 = 13
 
+  HASH_ALGORITHM_MD5 = 1
+  HASH_ALGORITHM_SHA1 = 2
+  HASH_ALGORITHM_SHA256 = 8
+  HASH_ALGORITHM_SHA384 = 9
+  HASH_ALGORITHM_SHA512 = 10
+  HASH_ALGORITHM_SHA224 = 11
+  HASH_ALGORITHM_SHA3_256 = 12
+  HASH_ALGORITHM_SHA3_512 = 14
+
+  HASH_ALGORITHM_NAMES = {
+    HASH_ALGORITHM_MD5 => 'MD5',
+    HASH_ALGORITHM_SHA1 => 'SHA1',
+    HASH_ALGORITHM_SHA256 => 'SHA256',
+    HASH_ALGORITHM_SHA384 => 'SHA384',
+    HASH_ALGORITHM_SHA512 => 'SHA512',
+    HASH_ALGORITHM_SHA224 => 'SHA224',
+    HASH_ALGORITHM_SHA3_256 => 'SHA3-256',
+    HASH_ALGORITHM_SHA3_512 => 'SHA3-512'
+  }.freeze
+
   # Public Key class provides an native extension representation for working with PGP public keys.
   class PublicKey
     private_class_method :new
@@ -121,6 +141,75 @@ module PGP
     # @return [String] the encrypted data encoded by base64.
     def encrypt(data, algorithm = ENCRIPTION_ALGORITHM_AES_128)
       encrypt_with_algorithm(data, algorithm)
+    end
+  end
+
+  # Private Key class provides an native extension representation for working with PGP private keys.
+  class PrivateKey
+    private_class_method :new
+
+    # @!method self.parse
+    #   Parses a PGP private key from a given string input.
+    #   @param input [String] the PGP private key in string format.
+    #   @return [PrivateKey] an instance of PrivateKey if parsing is successful.
+
+    # @!method fingerprint
+    #   Returns the fingerprint of the private key.
+    #   @return [String] the fingerprint of the private key.
+
+    # @!method algorithm
+    #   Returns the algorithm used by the private key.
+    #   @return [Integer] the algorithm identifier.
+
+    # @!method signing_supported?
+    #   Checks if the private key supports signing.
+    #   @return [Boolean] true if the key supports signing, false otherwise.
+
+    # @!method encryption_supported?
+    #   Checks if the private key supports encryption.
+    #   @return [Boolean] true if the key supports encryption, false otherwise.
+
+    # @!method version
+    #   Returns the version of the private key.
+    #   @return [Integer] the version of the private key.
+
+    # @!method created_at
+    #   Returns the creation time of the private key.
+    #   @return [Time] the creation time of the private key.
+
+    # @!method expires_at
+    #   Returns the expiration time of the private key, if any.
+    #   @return [Time, nil] the expiration time of the private key or nil if it does not expire.
+
+    # @!method sign_with_algorithm(input, algorithm)
+    #   Signs data with the specified hash algorithm.
+    #   @param input [String] the data to be signed.
+    #   @param algorithm [Integer] the hash algorithm identifier.
+    #   @return [String] the signed data encoded by base64.
+
+    # @!method sign(input)
+    #   Signs data with the default hash algorithm (SHA256).
+    #   @param input [String] the data to be signed.
+    #   @return [String] the signed data encoded by base64.
+
+    # Returns a string representation of the PrivateKey object, including its fingerprint, algorithm name, and version.
+    # @return [String] the string representation of the PrivateKey object.
+    def inspect
+      "#<#{self.class} #{fingerprint} #{algorithm_name} v#{version}>"
+    end
+
+    # Fetches the name of the algorithm used by the private key from a predefined list of names.
+    # @return [String] the name of the algorithm.
+    def algorithm_name
+      KEY_ALGORITHM_NAMES.fetch(algorithm, 'Unknown')
+    end
+
+    # Checks whether the private key has expired.
+    # @return [Boolean] true if the key has expired, false otherwise.
+    def expired?
+      return false if expires_at.nil?
+
+      expires_at.to_i <= Time.now.to_i
     end
   end
 end
