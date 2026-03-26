@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pgp-rb (0.2.1)
+    pgp-rb (0.2.2)
 
 GEM
   remote: https://rubygems.org/
