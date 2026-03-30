@@ -19,7 +19,7 @@ jobs:
         id: fetch
         with:
           supported-ruby-platforms: |
-            include:
+            only:
               - aarch64-linux
               - aarch64-linux-musl
               - arm64-darwin
