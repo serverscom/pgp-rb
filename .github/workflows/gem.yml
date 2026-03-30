@@ -47,7 +47,7 @@ jobs:
         ruby-version: "3.2"
         rustup-toolchain: "1.85.0"
 
-    - uses: oxidize-rb/actions/cross-gem@v1
+    - uses: oxidize-rb/actions/cross-gem@main
       id: cross-gem
       with:
         platform: ${{ matrix.platform }}
