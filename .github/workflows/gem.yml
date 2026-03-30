@@ -52,7 +52,7 @@ jobs:
       with:
         platform: ${{ matrix.platform }}
         ruby-versions: ${{ join(fromJSON(needs.ci-data.outputs.result).stable-ruby-versions, ',') }}
-        mount-toolchains: true
+        mount-toolchains: "true"
 
     - name: Build and publish Gem
       env:
