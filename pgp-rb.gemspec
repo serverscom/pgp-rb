@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version = PGP::VERSION
   spec.summary = 'rPGP ruby wrapper'
   spec.files = Dir['lib/**/*.rb', 'ext/**/*.{rs,toml,lock,rb}']
-  spec.extensions = ['ext/pgprb/extconf.rb']
+  spec.extensions = ['ext/pgp_rb/extconf.rb']
   spec.rdoc_options = ['--main', 'README.rdoc', '--charset', 'utf-8', '--exclude', 'ext/']
   spec.authors = ['Kirill Zaitsev']
   spec.email = ['kirik910@gmail.com']

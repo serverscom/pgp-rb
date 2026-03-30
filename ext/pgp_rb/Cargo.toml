@@ -6,11 +6,11 @@ edition = "2021"
 [dependencies]
 pgp = "0.16.0"
 rand = "0.8.5"
-magnus = "0.7.1"
+magnus = "0.8.2"
 base64 = "0.22.1"
 num-traits = "0.2.19"
 chrono = "0.4"
-rb-sys = { version = "0.9.117", features = ["ruby-static"] }
+rb-sys = { version = "0.9.124", features = ["ruby-static"] }
 
 [lib]
 crate-type = ["cdylib"]
